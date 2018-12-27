@@ -5,7 +5,7 @@
 #include <chrono>
 
 const int kValueRange = 5000000;
-const int kArraySize = 1000000;
+const int kArraySize = 100000;
 int main()
 {
     std::random_device rd;  //Will be used to obtain a seed for the random number engine
@@ -24,6 +24,6 @@ int main()
 
     auto end = std::chrono::system_clock::now();
 
-    auto elapsed_microseconds = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count(); 
-    std::cout << "elapsed time: " << elapsed_microseconds << "us\n";
+    auto elapsed_seconds = end-start;
+    std::cout << "elapsed time: " << elapsed_seconds.count() << "us\n";
 }
