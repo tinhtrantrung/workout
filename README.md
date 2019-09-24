@@ -1,2 +1,2 @@
-# workout
-Learn algorithm in C++
+# Algorithm Exercises
+
