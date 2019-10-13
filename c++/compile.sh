@@ -1,1 +1,1 @@
-g++ $1 -std=c++11
+clang++ -std=c++17 -Wall $1
