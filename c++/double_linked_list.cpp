@@ -3,6 +3,7 @@
 struct Node {
     int value = 110;
     Node* next = nullptr;
+    Node* previous = nullptr;
 };
 
 class List {
@@ -39,11 +40,39 @@ std::ostream& operator<<(std::ostream& os, const List& list) {
         p = p->next;
     }
 
-    return os << p->value;
+    os << p->value;
+
+    os << " <-> ";
+
+    p = list.tail_;
+    while (p != list.head_) {
+        os << p->value << ", ";
+        p = p->previous;
+    }
+
+    os << p->value;
+
+    return os;
 }
 
 int main() {
     List l;
+    l.PushBack(1);
+    l.PushBack(2);
+    l.PushFront(3);
+    l.PushFront(4);
+    l.PushFront(4);
+    l.PushFront(4);
+    std::cout << l << std::endl;
+    l.Remove(1);
+    std::cout << l << std::endl;
+    l.Remove(2);
+    std::cout << l << std::endl;
+    l.Remove(3);
+    std::cout << l << std::endl;
+    l.Remove(4);
+    std::cout << l << std::endl;
+
     l.PushBack(1);
     l.PushBack(2);
     l.PushFront(3);
@@ -90,7 +119,7 @@ int List::Front() { return head_ ? head_->value : 0; }
 int List::Back() { return tail_ ? tail_->value : 0; }
 
 void List::PushBack(const int& value) {
-    auto node = new Node{value, nullptr};
+    auto node = new Node{value, nullptr, tail_};
     if (!tail_) {
         tail_ = node;
         head_ = node;
@@ -101,11 +130,12 @@ void List::PushBack(const int& value) {
 }
 
 void List::PushFront(const int& value) {
-    auto node = new Node{value, head_};
+    auto node = new Node{value, head_, nullptr};
     if (!tail_) {
         tail_ = node;
         head_ = node;
     } else {
+        head_->previous = node;
         head_ = node;
     }
 }
@@ -122,20 +152,26 @@ void List::Remove(const int& value) {
         return;
     }
 
-    auto p = head_;
-    auto q = head_->next;
-    while (p->next != nullptr) {
-        if (q->value == value) {
-            p->next = q->next;
+    head_->previous = nullptr;
+
+    auto p = head_->next;
+    while (p != tail_) {
+        if (p->value == value) {
+            p->previous->next = p->next;
+            p->next->previous = p->previous;
+            auto q = p;
+            p = p->next;
             delete q;
-            q = p->next;
         } else {
-            p = q;
-            q = q->next;
+            p = p->next;
         }
     }
 
-    tail_ = p;
+    if (p->value == value) {
+        tail_ = p->previous;
+        tail_->next = nullptr;
+        delete p;
+    }
 }
 
 bool List::Empty() { return !head_; }
@@ -152,30 +188,27 @@ bool List::IsExisted(const int& value) {
 void List::PopBack() {
     if (!tail_) return;
 
-    if (head_ == tail_) {
-        delete tail_;
+    auto p = tail_;
+    tail_ = tail_->previous;
+    delete p;
+
+    if (!tail_) {
         head_ = nullptr;
-        tail_ = nullptr;
-        return;
+    } else {
+        tail_->next = nullptr;
     }
-
-    auto p = head_;
-    while (p->next != tail_) {
-        p = p->next;
-    }
-
-    p->next = nullptr;
-    delete tail_;
-    tail_ = p;
 }
 
 void List::PopFront() {
     if (!head_) return;
 
-    auto p = head_->next;
-    delete head_;
-    head_ = p;
+    auto p = head_;
+    head_ = head_->next;
+    delete p;
+
     if (!head_) {
         tail_ = nullptr;
+    } else {
+        head_->previous = nullptr;
     }
 }
