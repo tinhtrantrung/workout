@@ -1,1 +1,1 @@
-clang++ -std=c++17 -Wall $1
+clang++ -std=c++17 -Wall $1 -o $2
