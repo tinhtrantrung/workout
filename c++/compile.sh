@@ -8,4 +8,4 @@ fi
 
 SRC_FILE=$1
 BIN_NAME=$(echo $SRC_FILE | cut -d'.' -f 1)
-clang++ -std=c++17 -Wall $SRC_FILE -o $BIN_NAME
+clang++ -std=c++17 -stdlib=libc++ -Wall -pedantic $SRC_FILE -o $BIN_NAME

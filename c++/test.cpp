@@ -1,10 +1,11 @@
 #include <iostream>
 
-using namespace std;
 int main() {
-
-    cout << "int(7.4999999) = " << int(7.4999999) << endl;
-    cout << "int(7.5) = " << int(7.5) << endl;
-    cout << "int(7.999999)" << int(7.999999) << endl;
-
+    // if block with init-statement:
+    if(int a = 5; a < 8) {
+        std::cout << "Local variable a is < 8\n";
+    } else {
+        std::cout << "Local variable a is >= 8\n";
+    }
+    return 0;
 }
