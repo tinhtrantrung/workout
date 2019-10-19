@@ -48,6 +48,14 @@ class List {
   // Delete an ith node from a linked list. Be sure that such a node exists.
   void DeleteByIndex(const int &i);
 
+  // Delete from list L1 nodes whose positions are to be found in an ordered
+  // list L2
+  void DeleteByListIndex(const List<int> &l);
+
+  // Delete from list L1 nodes occupying positions indicated in ordered lists L2
+  // and L3.
+  void DeleteByListIndex(const List<int> &l1, const List<int> &l2);
+
  private:
   int size_ = 0;
   Node<T> *head_ = nullptr;
@@ -55,19 +63,15 @@ class List {
 };
 
 int main() {
-  List<int> k{1, 2, 3, 4, 5, 6, 7};
-  List<int> l{1, 2, 3, 4, 5, 6, 7};
+  List<int> k{'A', 'B', 'C', 'D', 'E'};
+  List<int> l{2, 4, 8};
+  List<int> m{2, 5};
   std::cout << "k: " << k << std::endl;
   std::cout << "l: " << l << std::endl;
+  std::cout << "k: " << m << std::endl;
 
-  l.Merge(k);
-  std::cout << "k: " << k << std::endl;
-  std::cout << "l: " << l << std::endl;
-
-  l.DeleteByIndex(15);
-  std::cout << "l after delete 15th: " << l << std::endl;
-  l.DeleteByIndex(7);
-  std::cout << "l after delete 7th: " << l << std::endl;
+  k.DeleteByListIndex(l, m);
+  std::cout << "k after deleted nodes: " << k << std::endl;
 }
 
 template <typename T>
@@ -319,4 +323,48 @@ void List<T>::DeleteByIndex(const int &i) {
   q->next->previous = p;
   delete q;
   size_--;
+}
+
+template <typename T>
+void List<T>::DeleteByListIndex(const List<int> &l) {
+  auto p{l.tail_};
+  auto index{0};
+  while (p != nullptr) {
+    if (index != p->value) {
+      index = p->value;
+      this->DeleteByIndex(index);
+    }
+    p = p->previous;
+  }
+}
+
+template <typename T>
+void List<T>::DeleteByListIndex(const List<int> &l1, const List<int> &l2) {
+  auto tail_1{l1.tail_};
+  auto tail_2{l2.tail_};
+  auto index{0};
+  while (tail_1 && tail_2) {
+    if (tail_1->value >= tail_2->value) {
+      if (index != tail_1->value) {
+        index = tail_1->value;
+        this->DeleteByIndex(index);
+      }
+      tail_1 = tail_1->previous;
+    } else {
+      if (index != tail_2->value) {
+        index = tail_2->value;
+        this->DeleteByIndex(index);
+      }
+      tail_2 = tail_2->previous;
+    }
+  }
+
+  auto p{tail_1 ? tail_1 : tail_2};
+  while (p != nullptr) {
+    if (index != p->value) {
+      index = p->value;
+      this->DeleteByIndex(index);
+    }
+    p = p->previous;
+  }
 }
